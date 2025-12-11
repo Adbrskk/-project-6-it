@@ -78,6 +78,8 @@ nextBtn.onclick = () => {
     }
 };
 
+
+
 // 2. localStorage
 // 3. loading
 // 4**. dynamic search {title, body}
