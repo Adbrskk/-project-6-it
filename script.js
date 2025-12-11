@@ -33,7 +33,7 @@ async function loadCard(id) {
         card.classList.remove("hidden");
         titleEl.textContent = data.title;
         bodyEl.textContent = data.body;
-    }, 400);
+    }, 300);
 }
 
 loadCard(postId);
@@ -81,5 +81,18 @@ nextBtn.onclick = () => {
 
 
 // 2. localStorage
+
+const savedId = localStorage.getItem("postId");
+if (savedId) {
+    postId = Number(savedId);
+}
+
+function saveId() {
+    localStorage.setItem("postId", postId);
+}
+
+saveId();
+
 // 3. loading
+
 // 4**. dynamic search {title, body}
