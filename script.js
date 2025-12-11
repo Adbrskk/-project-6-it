@@ -21,14 +21,15 @@ const card = document.getElementById("card");
 const loader = document.getElementById("loader");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
+const searchInput = document.getElementById("search");
 
-//id в localStorage
+// id в localStorage
 const savedId = localStorage.getItem("postId");
 if (savedId) {
     postId = Number(savedId);
 }
 
-//загрузка карточки
+// загрузка карточки
 async function loadCard(id) {
     card.classList.add("hidden");
     loader.classList.remove("hidden");
@@ -40,21 +41,24 @@ async function loadCard(id) {
         card.classList.remove("hidden");
         titleEl.textContent = data.title;
         bodyEl.textContent = data.body;
+
+        // проверяем поиск после загрузки
+        applySearch(searchInput.value);
     }, 300);
 }
 
-//переключатели
+// переключатели
 function validateButtons() {
     prevBtn.disabled = postId === 1;
     nextBtn.disabled = postId === 100;
 }
 
-//localStorage
+// localStorage
 function saveId() {
     localStorage.setItem("postId", postId);
 }
 
-//обработчики событий
+// обработчики событий
 prevBtn.onclick = () => {
     if (postId > 1) {
         postId--;
@@ -73,9 +77,25 @@ nextBtn.onclick = () => {
     }
 };
 
+// динамический поиск
+function applySearch(query) {
+    const text = query.toLowerCase();
+    const title = titleEl.textContent.toLowerCase();
+    const body = bodyEl.textContent.toLowerCase();
+
+    if (title.includes(text) || body.includes(text)) {
+        card.classList.remove("hidden");
+    } else {
+        card.classList.add("hidden");
+    }
+}
+
+searchInput.addEventListener("input", (e) => {
+    applySearch(e.target.value);
+});
+
 // инициализация
 document.addEventListener("DOMContentLoaded", () => {
     loadCard(postId);
     validateButtons();
 });
-
