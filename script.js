@@ -59,7 +59,24 @@ function validateButtons() {
     nextBtn.disabled = postId === 100;
 }
 
+loadCard(postId);
 validateButtons();
+
+prevBtn.onclick = () => {
+    if (postId > 1) {
+        postId--;
+        loadCard(postId);
+        validateButtons();
+    }
+};
+
+nextBtn.onclick = () => {
+    if (postId < 100) {
+        postId++;
+        loadCard(postId);
+        validateButtons();
+    }
+};
 
 // 2. localStorage
 // 3. loading
