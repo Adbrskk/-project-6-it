@@ -11,6 +11,12 @@ body {
     justify-content: center;
     padding-top: 40px;
 }
+
+.container {
+    max-width: 1000px;
+    width: 100%;
+}
+
 .controls {
     display: flex;
     gap: 5px;
@@ -26,7 +32,6 @@ body {
 
 
 .card {
-    width: 900px;
     background: #add8e6;
     border: 3px solid black;
     border-radius: 20px;

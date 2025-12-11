@@ -22,6 +22,9 @@ const loader = document.getElementById("loader");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 
+
+// 3. loading
+
 async function loadCard(id) {
     card.classList.add("hidden");
     loader.classList.remove("hidden");
@@ -37,7 +40,6 @@ async function loadCard(id) {
 }
 
 loadCard(postId);
-
 
 prevBtn.onclick = () => {
     if (postId > 1) {
@@ -59,7 +61,6 @@ function validateButtons() {
     nextBtn.disabled = postId === 100;
 }
 
-loadCard(postId);
 validateButtons();
 
 prevBtn.onclick = () => {
@@ -92,7 +93,5 @@ function saveId() {
 }
 
 saveId();
-
-// 3. loading
 
 // 4**. dynamic search {title, body}
