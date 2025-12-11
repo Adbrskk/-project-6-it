@@ -54,6 +54,13 @@ nextBtn.onclick = () => {
 };
 
 // 1. validation for switchers < >
+function validateButtons() {
+    prevBtn.disabled = postId === 1;
+    nextBtn.disabled = postId === 100;
+}
+
+validateButtons();
+
 // 2. localStorage
 // 3. loading
 // 4**. dynamic search {title, body}
