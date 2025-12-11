@@ -23,79 +23,86 @@ const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 const searchInput = document.getElementById("search");
 
-// id в localStorage
-const savedId = localStorage.getItem("postId");
-if (savedId) {
-    postId = Number(savedId);
-}
+let allPosts = [];
+let filteredPosts = [];
 
-// загрузка карточки
-async function loadCard(id) {
-    card.classList.add("hidden");
+async function loadAllPosts() {
     loader.classList.remove("hidden");
+    try {
+        const response = await fetch(`${BASE_URL}/posts`);
+        if (!response.ok) throw new Error("Failed to fetch posts");
+        allPosts = await response.json();
+        filteredPosts = [...allPosts];
 
-    const data = await getPost(id);
+        const savedId = localStorage.getItem("postId");
+        if (savedId) {
+            const index = allPosts.findIndex(post => post.id === Number(savedId));
+            postId = index >= 0 ? index : 0;
+        } else {
+            postId = 0;
+        }
 
-    setTimeout(() => {
+        showPost(postId);
+    } catch (error) {
+        console.log(error);
+    } finally {
         loader.classList.add("hidden");
-        card.classList.remove("hidden");
-        titleEl.textContent = data.title;
-        bodyEl.textContent = data.body;
-
-        // проверяем поиск после загрузки
-        applySearch(searchInput.value);
-    }, 300);
+    }
 }
 
-// переключатели
+function showPost(index) {
+    if (filteredPosts.length === 0) {
+        card.classList.add("hidden");
+        return;
+    }
+
+    const post = filteredPosts[index];
+    titleEl.textContent = post.title;
+    bodyEl.textContent = post.body;
+    card.classList.remove("hidden");
+
+    validateButtons();
+    saveId();
+}
+
 function validateButtons() {
-    prevBtn.disabled = postId === 1;
-    nextBtn.disabled = postId === 100;
+    prevBtn.disabled = postId <= 0;
+    nextBtn.disabled = postId >= filteredPosts.length - 1;
 }
 
-// localStorage
 function saveId() {
-    localStorage.setItem("postId", postId);
+    const post = filteredPosts[postId];
+    if (post) localStorage.setItem("postId", post.id);
 }
 
-// обработчики событий
+function applySearch(query) {
+    const text = query.toLowerCase();
+    filteredPosts = allPosts.filter(post =>
+        post.title.toLowerCase().includes(text) || post.body.toLowerCase().includes(text)
+    );
+
+    postId = 0;
+    showPost(postId);
+}
+
 prevBtn.onclick = () => {
-    if (postId > 1) {
+    if (postId > 0) {
         postId--;
-        loadCard(postId);
-        validateButtons();
-        saveId();
+        showPost(postId);
     }
 };
 
 nextBtn.onclick = () => {
-    if (postId < 100) {
+    if (postId < filteredPosts.length - 1) {
         postId++;
-        loadCard(postId);
-        validateButtons();
-        saveId();
+        showPost(postId);
     }
 };
-
-// динамический поиск
-function applySearch(query) {
-    const text = query.toLowerCase();
-    const title = titleEl.textContent.toLowerCase();
-    const body = bodyEl.textContent.toLowerCase();
-
-    if (title.includes(text) || body.includes(text)) {
-        card.classList.remove("hidden");
-    } else {
-        card.classList.add("hidden");
-    }
-}
 
 searchInput.addEventListener("input", (e) => {
     applySearch(e.target.value);
 });
 
-// инициализация
 document.addEventListener("DOMContentLoaded", () => {
-    loadCard(postId);
-    validateButtons();
+    loadAllPosts();
 });
