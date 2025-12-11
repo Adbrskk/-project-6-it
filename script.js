@@ -22,16 +22,20 @@ const loader = document.getElementById("loader");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 
+//id в localStorage
+const savedId = localStorage.getItem("postId");
+if (savedId) {
+    postId = Number(savedId);
+}
 
-// 3. loading
-
+//загрузка карточки
 async function loadCard(id) {
     card.classList.add("hidden");
     loader.classList.remove("hidden");
 
     const data = await getPost(id);
 
-    setTimeout(() => {   
+    setTimeout(() => {
         loader.classList.add("hidden");
         card.classList.remove("hidden");
         titleEl.textContent = data.title;
@@ -39,35 +43,24 @@ async function loadCard(id) {
     }, 300);
 }
 
-loadCard(postId);
-
-prevBtn.onclick = () => {
-    if (postId > 1) {
-        postId--;
-        loadCard(postId);
-    }
-};
-
-nextBtn.onclick = () => {
-    if (postId < 100) { 
-        postId++;
-        loadCard(postId);
-    }
-};
-
-// 1. validation for switchers < >
+//переключатели
 function validateButtons() {
     prevBtn.disabled = postId === 1;
     nextBtn.disabled = postId === 100;
 }
 
-validateButtons();
+//localStorage
+function saveId() {
+    localStorage.setItem("postId", postId);
+}
 
+//обработчики событий
 prevBtn.onclick = () => {
     if (postId > 1) {
         postId--;
         loadCard(postId);
         validateButtons();
+        saveId();
     }
 };
 
@@ -76,22 +69,13 @@ nextBtn.onclick = () => {
         postId++;
         loadCard(postId);
         validateButtons();
+        saveId();
     }
 };
 
+// инициализация
+document.addEventListener("DOMContentLoaded", () => {
+    loadCard(postId);
+    validateButtons();
+});
 
-
-// 2. localStorage
-
-const savedId = localStorage.getItem("postId");
-if (savedId) {
-    postId = Number(savedId);
-}
-
-function saveId() {
-    localStorage.setItem("postId", postId);
-}
-
-saveId();
-
-// 4**. dynamic search {title, body}
